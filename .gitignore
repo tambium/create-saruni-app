@@ -3,3 +3,9 @@ node_modules/
 
 # operating system
 **/.DS_Store
+
+# yarn
+yarn-error.log
+
+# editor
+.vscode
