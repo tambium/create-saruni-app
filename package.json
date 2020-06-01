@@ -3,5 +3,12 @@
   "workspaces": [
     "packages/*"
   ],
-  "license": "MIT"
+  "dependencies": {
+    "@saruni/cli": "^0.0.1",
+    "@saruni/dev-server": "^0.0.1"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.10.2",
+    "@babel/preset-typescript": "^7.10.1"
+  }
 }
