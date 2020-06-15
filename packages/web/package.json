@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@emotion/core": "^10.0.28",
-    "@saruni/web": "^0.0.3",
+    "@saruni/web": "latest",
     "next": "^9.4.4",
     "react": "^16.13.1",
     "react-dom": "^16.13.1"
