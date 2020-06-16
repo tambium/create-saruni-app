@@ -12,3 +12,6 @@ yarn-error.log
 
 # private keys
 *.pem
+
+# dist folders
+dist
