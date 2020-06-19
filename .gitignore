@@ -18,3 +18,7 @@ dist
 
 # dotenv
 .env
+
+# sls
+.serverless
+.webpack
