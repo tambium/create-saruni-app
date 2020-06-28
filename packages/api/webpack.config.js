@@ -1,7 +1,6 @@
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const path = require("path");
 const slsw = require("serverless-webpack");
-const nodeExternals = require("webpack-node-externals");
 
 module.exports = {
   entry: slsw.lib.entries,
@@ -19,11 +18,7 @@ module.exports = {
       ],
     }),
   ],
-  externals: [
-    nodeExternals({
-      modulesDir: path.resolve(__dirname, "../../node_modules"),
-    }),
-  ],
+  externals: ["@prisma/client"],
   module: {
     rules: [
       {
