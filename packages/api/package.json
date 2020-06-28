@@ -9,7 +9,6 @@
     "@prisma/client": "^2.1.3",
     "@saruni/api": "latest",
     "@saruni/auth": "latest",
-    "apollo-server-lambda": "^2.15.0",
     "graphql": "14.5.0"
   },
   "devDependencies": {
