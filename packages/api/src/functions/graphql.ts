@@ -1,4 +1,4 @@
-import { ApolloServer, gql } from "@saruni/api";
+import { ApolloServer, gql, CreateHandlerOptions } from "@saruni/api";
 
 import { db } from "../db";
 
@@ -30,4 +30,16 @@ const server = new ApolloServer({
   }),
 });
 
-export const handler = server.createHandler();
+let options: CreateHandlerOptions;
+
+if (process.env.NODE_ENV === "production") {
+  options = {
+    cors: {
+      credentials: true,
+      origin: "http://localhost:3000",
+      allowedHeaders: "Content-Type, Authorization",
+    },
+  };
+}
+
+export const handler = server.createHandler(options);
