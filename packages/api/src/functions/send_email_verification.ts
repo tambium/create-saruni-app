@@ -2,7 +2,7 @@ import cors from "@middy/http-cors";
 import httpErrorHandler from "@middy/http-error-handler";
 import jsonBodyParser from "@middy/http-json-body-parser";
 
-import { jwtMiddleware, baseOptions } from "@saruni/auth";
+import { jwtMiddleware } from "@saruni/auth";
 
 import { db } from "./../db";
 import { createSendEmailVerificationLambda, baseOptions } from "@saruni/api";
