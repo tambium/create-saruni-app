@@ -1,5 +1,7 @@
+// TODO: clean up babel config with proper override and move them to @saruni
 module.exports = {
   presets: [
+    "@babel/preset-react",
     "@babel/preset-typescript",
     [
       "@babel/preset-env",

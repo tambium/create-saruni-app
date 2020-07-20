@@ -1,9 +1,9 @@
-import { createTestContext } from "@saruni/test";
+import { createApiTestContext } from "@saruni/test";
 
-import { db } from "../db";
+import { db } from "../src/db";
 
 describe("Hello test", () => {
-  const ctx = createTestContext(db);
+  const ctx = createApiTestContext(db);
 
   test("Should return the 'Hello, Saruni!'", async () => {
     const result = await ctx.executeGraphql(`
