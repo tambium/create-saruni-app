@@ -1,3 +1,3 @@
 module.exports = {
-  setupFilesAfterEnv: ["./tests/setup.ts"],
+  setupFilesAfterEnv: ["./setup.ts"],
 };
