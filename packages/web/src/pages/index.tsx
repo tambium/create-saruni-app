@@ -1,5 +1,13 @@
 import React from "react";
 
+import { useHelloQuery } from "../../generated";
+
 export default function Home() {
-  return <span>Welcome to Saruni!</span>;
+  const { data, loading } = useHelloQuery();
+
+  if (loading) {
+    return <span>please wait...</span>;
+  }
+
+  return <span>{data?.hello}</span>;
 }
