@@ -1,18 +1,6 @@
-import { ApolloServer, gql, CreateHandlerOptions } from "@saruni/api";
+import { ApolloServer, CreateHandlerOptions } from "@saruni/api";
 
-import { db } from "../db";
-
-const typeDefs = gql`
-  type Query {
-    hello: String
-  }
-`;
-
-const resolvers = {
-  Query: {
-    hello: () => "Hello, Saruni!",
-  },
-};
+import { resolvers, typeDefs } from "../graphql";
 
 const server = new ApolloServer({
   typeDefs,
