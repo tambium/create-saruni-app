@@ -1,45 +1,19 @@
-# Create Saruni App
+# Saruni project
 
-## Admin
+This project was bootstrapped with the `create saruni-app` command from [Saruni](https://saruni.dev/).
 
-- `blocks [?]`
-  Modifiable content consumed by the web app.
+### Learn more
 
-## Api
+Get started with Saruni by reading documentation and guides at [saruni.dev](https://saruni.dev/).
 
-- `prisma/schema.prisma`
-  Configuration for the database schema.
+### Commands
 
-- `src/db`
-  Reusable database object.
+From your project directory, run:
 
-- `src/functions`
-  One-to-one mapping with lambda functions.
+#### `yarn saruni dev`
 
-- `src/graphql`
-  Resolvers for the GraphQL schema.
+To launch development servers with local instances of your cloud functions, Prisma client and web project. Open [http://localhost:3000](http://localhost:3000) to view your project in the browser.
 
-- `src/services`
-  Reusable business logic.
+#### `yarn saruni db migrate (save|up)`
 
-## Shared
-
-- `graphql`
-  Generated types for queries and mutations.
-
-- `validations`
-  Schemas for value parsing and validation.
-
-## Web
-
-- `components`
-  Reusable building blocks for the web app (e.g. buttons, text fields).
-
-- `layouts`
-  Reusable page structures for the web app (e.g. documentation layout, profile layout).
-
-- `pages`
-  Routes that map to a URL.
-
-- `views`
-  Holding place for specific usage of a component that is adopted more than once within app (e.g. help modal, error alert).
+To create and apply a migration to your database after making changes to your Prisma schema.
