@@ -13,7 +13,7 @@ yarn-error.log
 # private keys
 *.pem
 
-# dist folders
+# builds
 dist
 
 # dotenv
