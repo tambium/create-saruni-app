@@ -1,0 +1,9 @@
+{
+  "extends": "@tambium/typescript-configs/library.tsconfig.json",
+  "compilerOptions": {
+    "emitDeclarationOnly": true,
+    "outDir": "generated",
+    "rootDir": "src",
+    "types": ["@emotion/core"]
+  }
+}
