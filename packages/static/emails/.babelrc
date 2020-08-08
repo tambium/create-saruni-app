@@ -1,0 +1,3 @@
+{
+  "presets": ["@tambium/babel-preset", "@tambium/babel-preset/react"]
+}
