@@ -1,0 +1,120 @@
+service: resources
+
+provider:
+  name: aws
+  region: eu-west-1
+  stage: dev
+  runtime: nodejs12.x
+
+custom:
+  # TODO: Provide defaults but allow modification through .env.
+  DBInstanceSize:
+    dev: db.t2.micro
+    prod: db.t2.micro
+  stage: ${opt:stage, self:provider.stage}
+  # TODO: Make key name customizable through CLI.
+  BastionKeyName: bastion-key
+  DBName: ${ssm:/DBName/${self:custom.stage}~true}
+  DBInstance: ${self:custom.DBInstanceSize.${self:custom.stage}}
+  DBUsername: ${ssm:/DBUsername/${self:custom.stage}~true}
+  DBPassword: ${ssm:/DBPassword/${self:custom.stage}~true}
+  DBHost:
+    Fn::GetAtt: [PostgreSQLRDSInstance, Endpoint.Address]
+  DBPort:
+    Fn::GetAtt: [PostgreSQLRDSInstance, Endpoint.Port]
+  DBUrl:
+    {
+      "Fn::Join":
+        [
+          "",
+          [
+            "postgres://",
+            "${self:custom.DBUsername}",
+            ":",
+            "${self:custom.DBPassword}",
+            "@",
+            "${self:custom.DBHost}",
+            ":",
+            "${self:custom.DBPort}",
+            "/",
+            "${self:custom.DBName}",
+            "?schema=public",
+          ],
+        ],
+    }
+
+resources:
+  Resources:
+    VPC: ${file(./vpc.yml)}
+    VPCGatewayAttachment: ${file(./VPCGatewayAttachment.yml)}
+    PrivateSubnetA: ${file(./PrivateSubnetA.yml)}
+    PrivateSubnetB: ${file(./PrivateSubnetB.yml)}
+    PrivateSubnetC: ${file(./PrivateSubnetC.yml)}
+    RDSSubnetGroup: ${file(./RDSSubnetGroup.yml)}
+    InternetGateway: ${file(./InternetGateway.yml)}
+    PostgreSQLRDSInstance: ${file(./PostgreSQLRDSInstance.yml)}
+    BastionRouteTable: ${file(./BastionRouteTable.yml)}
+    BastionRoute: ${file(./BastionRoute.yml)}
+    PublicSubnet: ${file(./PublicSubnet.yml)}
+    PublicSubnetAssociation: ${file(./PublicSubnetAssociation.yml)}
+    BastionInstance: ${file(./BastionInstance.yml)}
+    BastionSSH: ${file(./BastionSSH.yml)}
+    DBSSH: ${file(./DBSSH.yml)}
+    BastionConnection: ${file(./BastionConnection.yml)}
+    LambdaSecurityGroup: ${file(./LambdaSecurityGroup.yml)}
+    SecurityGroup: ${file(./SecurityGroup.yml)}
+  Outputs:
+    PrivateSubnetA:
+      Value:
+        Ref: PrivateSubnetA
+      Export:
+        Name: ${self:custom.stage}-PrivateSubnetA
+    PrivateSubnetB:
+      Value:
+        Ref: PrivateSubnetB
+      Export:
+        Name: ${self:custom.stage}-PrivateSubnetB
+    PrivateSubnetC:
+      Value:
+        Ref: PrivateSubnetC
+      Export:
+        Name: ${self:custom.stage}-PrivateSubnetC
+    LambdaSecurityGroup:
+      Value:
+        Fn::GetAtt:
+          - LambdaSecurityGroup
+          - GroupId
+      Export:
+        Name: ${self:custom.stage}-LambdaSecurityGroup
+    DBName:
+      Value: ${self:custom.DBName}
+      Export:
+        Name: ${self:custom.stage}-DBName
+    DBUsername:
+      Value: ${self:custom.DBUsername}
+      Export:
+        Name: ${self:custom.stage}-DBUsername
+    DBPassword:
+      Value: ${self:custom.DBPassword}
+      Export:
+        Name: ${self:custom.stage}-DBPassword
+    DBHost:
+      Value: ${self:custom.DBHost}
+      Export:
+        Name: ${self:custom.stage}-DBHost
+    DBPort:
+      Value: ${self:custom.DBPort}
+      Export:
+        Name: ${self:custom.stage}-DBPort
+    AccessTokenSecret:
+      Value: ${ssm:/AccessTokenSecret/${self:custom.stage}~true}
+      Export:
+        Name: ${self:custom.stage}-AccessTokenSecret
+    RefreshTokenSecret:
+      Value: ${ssm:/RefreshTokenSecret/${self:custom.stage}~true}
+      Export:
+        Name: ${self:custom.stage}-RefreshTokenSecret
+    DBUrl:
+      Value: ${self:custom.DBUrl}
+      Export:
+        Name: ${self:custom.stage}-DBUrl

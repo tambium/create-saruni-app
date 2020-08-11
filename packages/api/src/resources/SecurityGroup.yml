@@ -1,0 +1,14 @@
+DependsOn: VPC
+Type: AWS::EC2::SecurityGroup
+Properties:
+  GroupDescription: SecurityGroup for Serverless Functions
+  VpcId:
+    Ref: VPC
+  SecurityGroupIngress:
+    - IpProtocol: tcp
+      FromPort: "5432"
+      ToPort: "5432"
+      SourceSecurityGroupId: !GetAtt LambdaSecurityGroup.GroupId
+  Tags:
+    - Key: "Name"
+      Value: "SecurityGroup"

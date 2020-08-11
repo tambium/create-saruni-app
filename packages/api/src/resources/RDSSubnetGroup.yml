@@ -1,0 +1,10 @@
+Type: AWS::RDS::DBSubnetGroup
+Properties:
+  DBSubnetGroupDescription: "RDS Subnet Group"
+  SubnetIds:
+    - Ref: PrivateSubnetA
+    - Ref: PrivateSubnetB
+    - Ref: PrivateSubnetC
+  Tags:
+    - Key: "Name"
+      Value: "RDSSubnetGroup"

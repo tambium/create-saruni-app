@@ -1,0 +1,14 @@
+DependsOn: VPC
+Type: AWS::EC2::SecurityGroup
+Properties:
+  GroupDescription: Security group to allow SSH connections
+  VpcId:
+    Ref: VPC
+  SecurityGroupIngress:
+    - IpProtocol: tcp
+      FromPort: "5432"
+      ToPort: "5432"
+      SourceSecurityGroupId: !GetAtt BastionConnection.GroupId
+  Tags:
+    - Key: "Name"
+      Value: "DB SSH"

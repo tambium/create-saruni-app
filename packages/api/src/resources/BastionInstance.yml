@@ -1,0 +1,9 @@
+Type: AWS::EC2::Instance
+Properties:
+  ImageId: ami-06ce3edf0cff21f07
+  InstanceType: t2.micro
+  KeyName: ${self:custom.BastionKeyName}
+  SecurityGroupIds:
+    - !GetAtt BastionSSH.GroupId
+    - !GetAtt BastionConnection.GroupId
+  SubnetId: !Ref PublicSubnet

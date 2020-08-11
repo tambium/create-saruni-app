@@ -1,0 +1,9 @@
+DependsOn: VPC
+Type: AWS::EC2::SecurityGroup
+Properties:
+  GroupDescription: To connect to the DB
+  VpcId:
+    Ref: VPC
+  Tags:
+    - Key: "Name"
+      Value: "BastionConnection"

@@ -1,0 +1,15 @@
+DependsOn: VPC
+Type: AWS::EC2::SecurityGroup
+Properties:
+  GroupDescription: Security group to allow SSH connections
+  VpcId:
+    Ref: VPC
+  SecurityGroupIngress:
+    - IpProtocol: tcp
+      FromPort: "22"
+      ToPort: "22"
+      # TODO: Providing a singular IP address would be more secure, so create cli to determine IP address.
+      CidrIp: 0.0.0.0/0
+  Tags:
+    - Key: "Name"
+      Value: "Bastion SSH"

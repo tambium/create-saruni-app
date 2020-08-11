@@ -1,0 +1,15 @@
+DependsOn: VPCGatewayAttachment
+Type: AWS::RDS::DBInstance
+Properties:
+  MasterUsername: ${self:custom.DBUsername}
+  MasterUserPassword: ${self:custom.DBPassword}
+  AllocatedStorage: 20
+  DBName: ${self:custom.DBName}
+  DBInstanceClass: ${self:custom.DBInstance}
+  VPCSecurityGroups:
+    - !GetAtt SecurityGroup.GroupId
+    - !GetAtt DBSSH.GroupId
+  DBSubnetGroupName:
+    Ref: RDSSubnetGroup
+  Engine: postgres
+  PubliclyAccessible: false

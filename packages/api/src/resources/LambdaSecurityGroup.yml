@@ -1,0 +1,9 @@
+DependsOn: VPC
+Type: AWS::EC2::SecurityGroup
+Properties:
+  GroupDescription: SecurityGroup used by Lambda
+  VpcId:
+    Ref: VPC
+  Tags:
+    - Key: "Name"
+      Value: "LambdaSecurityGroup"
