@@ -1,0 +1,115 @@
+service: graphql-${self:custom.stage}
+
+provider:
+  name: aws
+  region: eu-west-1
+  stage: dev
+  runtime: nodejs12.x
+
+custom:
+  p:
+    "Fn::ImportValue": ${self:custom.stage}-ExtApiGatewayRestApiRootResourceId
+  d:
+    {
+      "Fn::Join":
+        [
+          "",
+          [
+            "${self:custom.p}",
+            ".execute-api.",
+            "${self:provider.region}",
+            ".amazonaws.com",
+          ],
+        ],
+    }
+  stage: ${opt:stage, self:provider.stage}
+  keepOutputDirectory: true
+  webpack:
+    webpackConfig: "../../../webpack.config.js"
+    includeModules:
+      packagePath: "../../../package.json"
+      forceInclude:
+        - "@prisma/client"
+      forceExclude:
+        - "@prisma/cli"
+        - "aws-sdk"
+    packager: "yarn"
+    scripts:
+      - prisma generate
+
+plugins:
+  - serverless-pseudo-parameters
+  - serverless-webpack
+
+package:
+  individually: true
+
+resources:
+  Resources:
+    GraphQLLambdaRole: ${file(./resources/GraphQLLambdaRole.yml)}
+  Outputs:
+    ApiGatewayRestApiId:
+      Value:
+        Ref: ApiGatewayRestApi
+      Export:
+        Name: ${self:custom.stage}-ExtApiGatewayRestApiId
+    ApiGatewayRestApiRootResourceId:
+      Value:
+        Fn::GetAtt:
+          - ApiGatewayRestApi
+          - RootResourceId
+      Export:
+        Name: ${self:custom.stage}-ExtApiGatewayRestApiRootResourceId
+
+functions:
+  graphql:
+    role: GraphQLLambdaRole
+    environment:
+      DOMAIN: ${self:custom.d}
+      STAGE: ${self:custom.stage}
+      ACCESS_TOKEN_SECRET:
+        "Fn::ImportValue": ${self:custom.stage}-AccessTokenSecret
+      REFRESH_TOKEN_SECRET:
+        "Fn::ImportValue": ${self:custom.stage}-RefreshTokenSecret
+      DATABASE_URL:
+        "Fn::ImportValue": ${self:custom.stage}-DBUrl
+      DB_HOST:
+        "Fn::ImportValue": ${self:custom.stage}-DBHost
+      DB_PORT:
+        "Fn::ImportValue": ${self:custom.stage}-DBPort
+      DB_NAME:
+        "Fn::ImportValue": ${self:custom.stage}-DBName
+      DB_USERNAME:
+        "Fn::ImportValue": ${self:custom.stage}-DBUsername
+      DB_PASSWORD:
+        "Fn::ImportValue": ${self:custom.stage}-DBPassword
+    vpc:
+      securityGroupIds:
+        - "Fn::ImportValue": ${self:custom.stage}-LambdaSecurityGroup
+      subnetIds:
+        - "Fn::ImportValue": ${self:custom.stage}-PrivateSubnetA
+        - "Fn::ImportValue": ${self:custom.stage}-PrivateSubnetB
+        - "Fn::ImportValue": ${self:custom.stage}-PrivateSubnetC
+    handler: graphql.handler
+    events:
+      - http:
+          path: /graphql
+          method: post
+          cors:
+            origin:
+              - "http://localhost:3000"
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
+            allowCredentials: true
+      - http:
+          path: /graphql
+          method: get
+          cors:
+            origin:
+              - "http://localhost:3000"
+            allowCredentials: true

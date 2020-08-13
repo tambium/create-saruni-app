@@ -1,0 +1,115 @@
+service: auth-${self:custom.stage}
+
+provider:
+  name: aws
+  region: eu-west-1
+  stage: dev
+  runtime: nodejs12.x
+  apiGateway:
+    restApiId:
+      "Fn::ImportValue": ${self:custom.stage}-ExtApiGatewayRestApiId
+    restApiRootResourceId:
+      "Fn::ImportValue": ${self:custom.stage}-ExtApiGatewayRestApiRootResourceId
+
+custom:
+  restApiId:
+    "Fn::ImportValue": ${self:custom.stage}-ExtApiGatewayRestApiId
+  domain:
+    {
+      "Fn::Join":
+        [
+          "",
+          [
+            "${self:custom.restApiId}",
+            ".execute-api.",
+            "${self:provider.region}",
+            ".amazonaws.com",
+          ],
+        ],
+    }
+  stage: ${opt:stage, self:provider.stage}
+  webpack:
+    keepOutputDirectory: true
+    webpackConfig: "../../../webpack.config.js"
+    includeModules:
+      packagePath: "../../../package.json"
+      forceExclude:
+        - "aws-sdk"
+    packager: "yarn"
+
+plugins:
+  - serverless-pseudo-parameters
+  - serverless-webpack
+
+package:
+  individually: true
+
+resources:
+  Resources:
+    AuthLambdaRole: ${file(./resources/AuthLambdaRole.yml)}
+
+functions:
+  cookieManager:
+    role: AuthLambdaRole
+    environment:
+      DOMAIN: ${self:custom.domain}
+      STAGE: ${self:custom.stage}
+      ACCESS_TOKEN_SECRET:
+        "Fn::ImportValue": ${self:custom.stage}-AccessTokenSecret
+      REFRESH_TOKEN_SECRET:
+        "Fn::ImportValue": ${self:custom.stage}-RefreshTokenSecret
+    handler: cookieManager.handler
+    events:
+      - http:
+          path: /cookieManager
+          method: put
+          cors:
+            origin:
+              - "http://localhost:3000"
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
+            allowCredentials: true
+      - http:
+          path: /cookieManager
+          method: delete
+          cors:
+            origin:
+              - "http://localhost:3000"
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
+            allowCredentials: true
+  refreshToken:
+    role: AuthLambdaRole
+    environment:
+      DOMAIN: ${self:custom.domain}
+      STAGE: ${self:custom.stage}
+      ACCESS_TOKEN_SECRET:
+        "Fn::ImportValue": ${self:custom.stage}-AccessTokenSecret
+      REFRESH_TOKEN_SECRET:
+        "Fn::ImportValue": ${self:custom.stage}-RefreshTokenSecret
+    handler: refreshToken.handler
+    events:
+      - http:
+          path: /refreshToken
+          method: post
+          cors:
+            origin:
+              - "http://localhost:3000"
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
+            allowCredentials: true

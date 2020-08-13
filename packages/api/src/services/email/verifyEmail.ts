@@ -1,13 +1,14 @@
-import { createVerifyEmailLambda, baseOptions } from "@saruni/api";
+import { verifyEmail, baseOptions } from "@saruni/api";
 import { jwtMiddleware } from "@saruni/auth";
+import middy from "@middy/core";
 import cors from "@middy/http-cors";
 import httpErrorHandler from "@middy/http-error-handler";
 import validator from "@middy/validator";
 import jsonBodyParser from "@middy/http-json-body-parser";
 
-import { db } from "./../db";
+import { db } from "./../../db";
 
-createVerifyEmailLambda({ db })
+export const handler = middy(verifyEmail({ db }))
   .use(jsonBodyParser())
   .use(
     validator({
