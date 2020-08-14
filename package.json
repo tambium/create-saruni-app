@@ -3,14 +3,17 @@
   "workspaces": [
     "packages/*"
   ],
-  "dependencies": {
-    "@saruni/cli": "latest",
-    "@saruni/dev-server": "latest"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@babel/preset-env": "^7.10.2",
     "@babel/preset-typescript": "^7.10.1",
+    "@saruni/cli": "latest",
+    "@saruni/dev-server": "latest",
     "@types/jest": "^26.0.5",
-    "jest": "^26.1.0"
+    "jest": "^26.1.0",
+    "serverless-domain-manager": "^4.2.0",
+    "serverless-pseudo-parameters": "^2.5.0",
+    "serverless-webpack": "^5.3.2",
+    "webpack": "^4.44.0"
   }
 }
