@@ -1,0 +1,16 @@
+Type: AWS::Route53::RecordSetGroup
+Properties:
+  HostedZoneId: Z09359271CE0ZEQEDFID9
+  RecordSets:
+    - Name: "chat.saruni-samples.com"
+      Type: A
+      AliasTarget:
+        DNSName: !GetAtt FrontendCloudfront.DomainName
+        EvaluateTargetHealth: false
+        HostedZoneId: Z2FDTNDATAQYW2
+    - Name: "chat.saruni-samples.com"
+      Type: AAAA
+      AliasTarget:
+        DNSName: !GetAtt FrontendCloudfront.DomainName
+        EvaluateTargetHealth: false
+        HostedZoneId: Z2FDTNDATAQYW2

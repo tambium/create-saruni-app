@@ -1,0 +1,16 @@
+Type: AWS::S3::BucketPolicy
+Properties:
+  Bucket:
+    Ref: FrontendBucket
+  PolicyDocument:
+    Statement:
+      - Action:
+          - "s3:GetObject"
+        Effect: "Allow"
+        Resource:
+          Fn::Join:
+            - ""
+            - - "arn:aws:s3:::"
+              - Ref: FrontendBucket
+              - "/*"
+        Principal: "*"
