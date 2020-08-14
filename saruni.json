@@ -1,1 +1,34 @@
-{}
+{
+  "serverless": {
+    "prod": {
+      "region": "eu-west-1",
+      "domainName": "",
+      "domainUrl": "",
+      "certificateArn": "",
+      "bastionKeyName": "bastion-key",
+      "dbInstance": "db.t2.micro",
+      "frontendDomain": "",
+      "frontendUrl": "",
+      "frontendCloudfrontUrl": "",
+      "awsProfile": "chat_prod",
+      "frontendS3Bucket": ""
+    },
+    "dev": {
+      "region": "eu-west-1",
+      "domainName": "",
+      "domainUrl": "",
+      "certificateArn": "",
+      "bastionKeyName": "bastion-key",
+      "dbInstance": "db.t2.micro",
+      "frontendDomain": "",
+      "frontendUrl": "",
+      "frontendCloudfrontUrl": "",
+      "awsProfile": "",
+      "frontendS3Bucket": ""
+    }
+  },
+  "devServerEndpoint": {
+    "web": "http://localhost:3000",
+    "api": "http://localhost:4000"
+  }
+}
