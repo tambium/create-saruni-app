@@ -1,32 +1,34 @@
-service: auth-${self:custom.stage}
+service: auth
 
 provider:
   name: aws
-  region: eu-west-1
+  region: ${file(./../../../../../saruni.json):serverless.${self:custom.stage}.region}
   stage: dev
   runtime: nodejs12.x
   apiGateway:
     restApiId:
-      "Fn::ImportValue": ${self:custom.stage}-ExtApiGatewayRestApiId
+      "Fn::ImportValue": ${self:custom.stage}-ExtAPIGatewayRESTAPIId
     restApiRootResourceId:
-      "Fn::ImportValue": ${self:custom.stage}-ExtApiGatewayRestApiRootResourceId
+      "Fn::ImportValue": ${self:custom.stage}-ExtAPIGatewayRESTAPIRootResourceId
 
 custom:
-  restApiId:
-    "Fn::ImportValue": ${self:custom.stage}-ExtApiGatewayRestApiId
+  RestAPIId:
+    "Fn::ImportValue": ${self:custom.stage}-ExtAPIGatewayRESTAPIId
   domain:
-    {
-      "Fn::Join":
-        [
-          "",
+    dev:
+      {
+        "Fn::Join":
           [
-            "${self:custom.restApiId}",
-            ".execute-api.",
-            "${self:provider.region}",
-            ".amazonaws.com",
+            "",
+            [
+              "${self:custom.RestAPIId}",
+              ".execute-api.",
+              "${self:provider.region}",
+              ".amazonaws.com",
+            ],
           ],
-        ],
-    }
+      }
+    prod: ${file(./../../../../../saruni.json):serverless.${self:custom.stage}.domainName}
   stage: ${opt:stage, self:provider.stage}
   webpack:
     keepOutputDirectory: true
@@ -45,6 +47,8 @@ package:
   individually: true
 
 resources:
+  Conditions:
+    IsProd: !Equals ["${self:custom.stage}", prod]
   Resources:
     AuthLambdaRole: ${file(./resources/AuthLambdaRole.yml)}
 
@@ -52,7 +56,7 @@ functions:
   cookieManager:
     role: AuthLambdaRole
     environment:
-      DOMAIN: ${self:custom.domain}
+      DOMAIN: ${self:custom.domain.${self:custom.stage}}
       STAGE: ${self:custom.stage}
       ACCESS_TOKEN_SECRET:
         "Fn::ImportValue": ${self:custom.stage}-AccessTokenSecret
@@ -64,8 +68,10 @@ functions:
           path: /cookieManager
           method: put
           cors:
-            origin:
-              - "http://localhost:3000"
+            origins:
+              - ${file(./../../../../../saruni.json):serverless.${self:custom.stage}.frontendUrl}
+              - ${file(./../../../../../saruni.json):serverless.${self:custom.stage}.frontendCloudfrontUrl}
+              - ${file(./../../../../../saruni.json):devServerEndpoint.web}
             headers:
               - Content-Type
               - X-Amz-Date
@@ -78,8 +84,10 @@ functions:
           path: /cookieManager
           method: delete
           cors:
-            origin:
-              - "http://localhost:3000"
+            origins:
+              - ${file(./../../../../../saruni.json):serverless.${self:custom.stage}.frontendUrl}
+              - ${file(./../../../../../saruni.json):serverless.${self:custom.stage}.frontendCloudfrontUrl}
+              - ${file(./../../../../../saruni.json):devServerEndpoint.web}
             headers:
               - Content-Type
               - X-Amz-Date
@@ -91,7 +99,7 @@ functions:
   refreshToken:
     role: AuthLambdaRole
     environment:
-      DOMAIN: ${self:custom.domain}
+      DOMAIN: ${self:custom.domain.${self:custom.stage}}
       STAGE: ${self:custom.stage}
       ACCESS_TOKEN_SECRET:
         "Fn::ImportValue": ${self:custom.stage}-AccessTokenSecret
@@ -103,8 +111,10 @@ functions:
           path: /refreshToken
           method: post
           cors:
-            origin:
-              - "http://localhost:3000"
+            origins:
+              - ${file(./../../../../../saruni.json):serverless.${self:custom.stage}.frontendUrl}
+              - ${file(./../../../../../saruni.json):serverless.${self:custom.stage}.frontendCloudfrontUrl}
+              - ${file(./../../../../../saruni.json):devServerEndpoint.web}
             headers:
               - Content-Type
               - X-Amz-Date

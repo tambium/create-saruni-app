@@ -2,18 +2,20 @@ service: resources
 
 provider:
   name: aws
-  region: eu-west-1
+  region: ${file(./../../../../saruni.json):serverless.${self:custom.stage}.region}
   stage: dev
   runtime: nodejs12.x
 
 custom:
-  # TODO: Provide defaults but allow modification through .env.
   DBInstanceSize:
     dev: db.t2.micro
-    prod: db.t2.micro
+    prod: ${file(./../../../../saruni.json):serverless.${self:custom.stage}.dbInstance}
   stage: ${opt:stage, self:provider.stage}
-  # TODO: Make key name customizable through CLI.
-  BastionKeyName: bastion-key
+  IsProd: !Equals ["${self:custom.stage}", prod]
+  FrontendDomain:
+    dev: !GetAtt FrontendCloudfront.DomainName
+    prod: ${file(./../../../../saruni.json):serverless.${self:custom.stage}.frontendDomain}
+  BastionKeyName: ${self:custom.stage}-${file(./../../../../saruni.json):serverless.${self:custom.stage}.bastionKeyName}
   DBName: ${ssm:/DBName/${self:custom.stage}~true}
   DBInstance: ${self:custom.DBInstanceSize.${self:custom.stage}}
   DBUsername: ${ssm:/DBUsername/${self:custom.stage}~true}
@@ -44,7 +46,13 @@ custom:
     }
 
 resources:
+  Conditions:
+    IsProd: !Equals ["${self:custom.stage}", prod]
   Resources:
+    FrontendCloudfront: ${file(./FrontendCloudfront.yml)}
+    FrontendRoutes: ${file(./FrontendRoutes.yml)}
+    FrontendBucket: ${file(./FrontendBucket.yml)}
+    FrontendBucketPolicy: ${file(./FrontendBucketPolicy.yml)}
     VPC: ${file(./vpc.yml)}
     VPCGatewayAttachment: ${file(./VPCGatewayAttachment.yml)}
     PrivateSubnetA: ${file(./PrivateSubnetA.yml)}
@@ -118,3 +126,7 @@ resources:
       Value: ${self:custom.DBUrl}
       Export:
         Name: ${self:custom.stage}-DBUrl
+    WebDistributionUrl:
+      Value: !Join ["", ["http://", !GetAtt FrontendCloudfront.DomainName]]
+      Export:
+        Name: ${self:custom.stage}-WebDistributionUrl
