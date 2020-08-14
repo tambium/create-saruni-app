@@ -3,6 +3,8 @@ import { ApolloServer, CreateHandlerOptions, Config } from "@saruni/api";
 import { db } from "./../../db";
 import { resolvers, typeDefs } from "../../graphql";
 
+import saruniJson from "../../../../../saruni.json";
+
 let options: CreateHandlerOptions;
 
 let config: Config = {
@@ -23,11 +25,23 @@ if (process.env.STAGE !== "prod") {
   };
 }
 
-if (process.env.NODE_ENV === "production") {
+if (process.env.STAGE === "prod") {
   options = {
     cors: {
       credentials: true,
-      origin: "http://localhost:3000",
+      origin: saruniJson.serverless.prod.frontendUrl,
+      allowedHeaders: "Content-Type, Authorization",
+    },
+  };
+} else if (process.env.STAGE === "dev") {
+  options = {
+    cors: {
+      credentials: true,
+      origin: [
+        saruniJson.devServerEndpoint.web,
+        saruniJson.serverless.dev.frontendCloudfrontUrl,
+        saruniJson.serverless.dev.frontendUrl,
+      ],
       allowedHeaders: "Content-Type, Authorization",
     },
   };
@@ -36,14 +50,10 @@ if (process.env.NODE_ENV === "production") {
 const server = new ApolloServer(config);
 
 export const handler = (event, ctx, cb) => {
-  let result;
-
   try {
-    result = server.createHandler(options)(event, ctx, cb);
+    server.createHandler(options)(event, ctx, cb);
   } catch (e) {
-  } finally {
-    db.disconnect();
+    db.$disconnect();
+    throw e;
   }
-
-  return result;
 };
