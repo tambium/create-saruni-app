@@ -84,7 +84,7 @@ functions:
             origins:
               - ${file(./../../../../../saruni.json):serverless.${self:custom.stage}.frontendUrl}
               - ${file(./../../../../../saruni.json):serverless.${self:custom.stage}.frontendCloudfrontUrl}
-              - ${file(./../../../../../saruni.json):devServerEndpoint.web}
+              - http://localhost:${file(./../../../../../saruni.json):devServerPort.web}
             headers:
               - Content-Type
               - X-Amz-Date
@@ -100,7 +100,7 @@ functions:
             origins:
               - ${file(./../../../../../saruni.json):serverless.${self:custom.stage}.frontendUrl}
               - ${file(./../../../../../saruni.json):serverless.${self:custom.stage}.frontendCloudfrontUrl}
-              - ${file(./../../../../../saruni.json):devServerEndpoint.web}
+              - http://localhost:${file(./../../../../../saruni.json):devServerPort.web}
             headers:
               - Content-Type
               - X-Amz-Date

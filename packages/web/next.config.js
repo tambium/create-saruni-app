@@ -11,7 +11,7 @@ if (process.env.STAGE === "local" && process.env.USE_CLOUD === "true") {
 } else if (process.env.STAGE === "prod") {
   API_ENDPOINT = saruniJson.serverless.prod.domainUrl;
 } else if (process.env.STAGE === "local") {
-  API_ENDPOINT = saruniJson.devServerEndpoint.api;
+  API_ENDPOINT = `http://${saruniJson.devServerPort.api}`;
 } else {
   API_ENDPOINT = saruniJson.serverless.dev.domainUrl;
 }

@@ -38,7 +38,7 @@ if (process.env.STAGE === "prod") {
     cors: {
       credentials: true,
       origin: [
-        saruniJson.devServerEndpoint.web,
+        `http://localhost:${saruniJson.devServerPort.web}`,
         saruniJson.serverless.dev.frontendCloudfrontUrl,
         saruniJson.serverless.dev.frontendUrl,
       ],

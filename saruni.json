@@ -30,8 +30,8 @@
       "frontendS3Bucket": ""
     }
   },
-  "devServerEndpoint": {
-    "web": "http://localhost:3000",
-    "api": "http://localhost:4000"
+  "devServerPort": {
+    "web": "3000",
+    "api": "4000"
   }
 }
