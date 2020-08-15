@@ -13,7 +13,7 @@ let corsOptions = {
 
 if (process.env.STAGE === "prod") {
   corsOptions.origin = saruniJson.serverless.prod.frontendUrl;
-} else if (process.env.STAGE === "dev") {
+} else {
   corsOptions.origins = [
     saruniJson.serverless.dev.frontendUrl,
     saruniJson.serverless.dev.frontendCloudfrontUrl,

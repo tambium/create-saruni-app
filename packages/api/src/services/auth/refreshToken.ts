@@ -17,7 +17,7 @@ if (process.env.STAGE === "prod") {
   corsOptions.origins = [
     saruniJson.serverless.dev.frontendUrl,
     saruniJson.serverless.dev.frontendCloudfrontUrl,
-    process.saruniJson.devServerEndpoint.web,
+    saruniJson.devServerEndpoint.web,
   ];
 }
 export const handler = middy(refreshToken())
