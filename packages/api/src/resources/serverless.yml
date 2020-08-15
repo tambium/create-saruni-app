@@ -7,19 +7,17 @@ provider:
   runtime: nodejs12.x
 
 custom:
+  ProjectName: ${file(./../../../../saruni.json):projectName}
   DBInstanceSize:
     dev: db.t2.micro
     prod: ${file(./../../../../saruni.json):serverless.${self:custom.stage}.dbInstance}
   stage: ${opt:stage, self:provider.stage}
   IsProd: !Equals ["${self:custom.stage}", prod]
-  FrontendDomain:
-    dev: !GetAtt FrontendCloudfront.DomainName
-    prod: ${file(./../../../../saruni.json):serverless.${self:custom.stage}.frontendDomain}
   BastionKeyName: ${self:custom.stage}-${file(./../../../../saruni.json):serverless.${self:custom.stage}.bastionKeyName}
-  DBName: ${ssm:/DBName/${self:custom.stage}~true}
+  DBName: ${ssm:/${self:custom.ProjectName}/DBName/${self:custom.stage}~true}
   DBInstance: ${self:custom.DBInstanceSize.${self:custom.stage}}
-  DBUsername: ${ssm:/DBUsername/${self:custom.stage}~true}
-  DBPassword: ${ssm:/DBPassword/${self:custom.stage}~true}
+  DBUsername: ${ssm:/${self:custom.ProjectName}/DBUsername/${self:custom.stage}~true}
+  DBPassword: ${ssm:/${self:custom.ProjectName}/DBPassword/${self:custom.stage}~true}
   DBHost:
     Fn::GetAtt: [PostgreSQLRDSInstance, Endpoint.Address]
   DBPort:
@@ -115,11 +113,11 @@ resources:
       Export:
         Name: ${self:custom.stage}-DBPort
     AccessTokenSecret:
-      Value: ${ssm:/AccessTokenSecret/${self:custom.stage}~true}
+      Value: ${ssm:/${self:custom.ProjectName}/AccessTokenSecret/${self:custom.stage}~true}
       Export:
         Name: ${self:custom.stage}-AccessTokenSecret
     RefreshTokenSecret:
-      Value: ${ssm:/RefreshTokenSecret/${self:custom.stage}~true}
+      Value: ${ssm:/${self:custom.ProjectName}/RefreshTokenSecret/${self:custom.stage}~true}
       Export:
         Name: ${self:custom.stage}-RefreshTokenSecret
     DBUrl:
