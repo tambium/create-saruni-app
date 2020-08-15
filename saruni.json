@@ -1,22 +1,25 @@
 {
+  "projectName": "",
   "serverless": {
     "prod": {
       "region": "eu-west-1",
       "domainName": "",
       "domainUrl": "",
+      "hostedZoneId": "",
       "certificateArn": "",
       "bastionKeyName": "bastion-key",
       "dbInstance": "db.t2.micro",
       "frontendDomain": "",
       "frontendUrl": "",
       "frontendCloudfrontUrl": "",
-      "awsProfile": "chat_prod",
+      "awsProfile": "",
       "frontendS3Bucket": ""
     },
     "dev": {
       "region": "eu-west-1",
       "domainName": "",
       "domainUrl": "",
+      "hostedZoneId": "",
       "certificateArn": "",
       "bastionKeyName": "bastion-key",
       "dbInstance": "db.t2.micro",
