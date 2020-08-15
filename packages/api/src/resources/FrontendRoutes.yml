@@ -1,14 +1,15 @@
 Type: AWS::Route53::RecordSetGroup
+Condition: IsProd
 Properties:
-  HostedZoneId: Z09359271CE0ZEQEDFID9
+  HostedZoneId: ${file(./../../../../saruni.json):serverless.${self:custom.stage}.hostedZoneId}
   RecordSets:
-    - Name: "chat.saruni-samples.com"
+    - Name: ${file(./../../../../saruni.json):serverless.${self:custom.stage}.frontendDomain}
       Type: A
       AliasTarget:
         DNSName: !GetAtt FrontendCloudfront.DomainName
         EvaluateTargetHealth: false
         HostedZoneId: Z2FDTNDATAQYW2
-    - Name: "chat.saruni-samples.com"
+    - Name: ${file(./../../../../saruni.json):serverless.${self:custom.stage}.frontendDomain}
       Type: AAAA
       AliasTarget:
         DNSName: !GetAtt FrontendCloudfront.DomainName
