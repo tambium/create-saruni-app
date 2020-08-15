@@ -14,7 +14,7 @@ module.exports = {
     new CopyWebpackPlugin({
       patterns: [
         path.resolve(__dirname, "./prisma/schema.prisma"),
-        path.resolve(__dirname, "./prisma/.env"),
+        path.resolve(__dirname, "./../../.env"),
       ],
     }),
   ],
