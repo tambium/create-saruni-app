@@ -31,8 +31,9 @@ custom:
         - "@prisma/cli"
         - "aws-sdk"
     packager: "yarn"
-    scripts:
-      - prisma generate
+    packagerOptions:
+      scripts:
+        - prisma generate
 
 plugins:
   - serverless-domain-manager

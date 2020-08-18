@@ -19,9 +19,15 @@ let config: Config = {
   }),
 };
 
-if (process.env.STAGE !== "prod") {
+if (process.env.STAGE === "dev") {
   config.playground = {
-    endpoint: `/${process.env.STAGE}/graphql`,
+    endpoint: `/dev/graphql`,
+  };
+}
+
+if (process.env.STAGE === "local") {
+  config.playground = {
+    endpoint: `/graphql`,
   };
 }
 
