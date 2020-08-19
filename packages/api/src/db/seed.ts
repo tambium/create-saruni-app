@@ -8,6 +8,6 @@ export const seed = async () => {
   } catch (e) {
     console.log(JSON.stringify(e));
   } finally {
-    await db.disconnect();
+    await db.$disconnect();
   }
 };

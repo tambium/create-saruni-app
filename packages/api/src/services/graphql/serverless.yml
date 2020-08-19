@@ -1,29 +1,26 @@
-service: graphql-${self:custom.stage}
+service: graphql
 
 provider:
   name: aws
-  region: eu-west-1
+  region: ${file(./../../../../../saruni.json):serverless.${self:custom.stage}.region}
   stage: dev
   runtime: nodejs12.x
 
 custom:
-  p:
-    "Fn::ImportValue": ${self:custom.stage}-ExtApiGatewayRestApiRootResourceId
-  d:
-    {
-      "Fn::Join":
-        [
-          "",
-          [
-            "${self:custom.p}",
-            ".execute-api.",
-            "${self:provider.region}",
-            ".amazonaws.com",
-          ],
-        ],
-    }
+  createCustomDomain:
+    dev: false
+    prod: true
+  customDomain:
+    domainName: ${file(./../../../../../saruni.json):serverless.${self:custom.stage}.domainName}
+    certificateArn: ${file(./../../../../../saruni.json):serverless.${self:custom.stage}.certificateArn}
+    stage: ${self:custom.stage}
+    createRoute53Record: true
+    enabled: ${self:custom.createCustomDomain.${self:custom.stage}}
+    endpointType: "edge"
+    securityPolicy: tls_1_2
+    apiType: rest
+    autoDomain: false
   stage: ${opt:stage, self:provider.stage}
-  keepOutputDirectory: true
   webpack:
     webpackConfig: "../../../webpack.config.js"
     includeModules:
@@ -34,10 +31,12 @@ custom:
         - "@prisma/cli"
         - "aws-sdk"
     packager: "yarn"
-    scripts:
-      - prisma generate
+    packagerOptions:
+      scripts:
+        - prisma generate
 
 plugins:
+  - serverless-domain-manager
   - serverless-pseudo-parameters
   - serverless-webpack
 
@@ -48,41 +47,28 @@ resources:
   Resources:
     GraphQLLambdaRole: ${file(./resources/GraphQLLambdaRole.yml)}
   Outputs:
-    ApiGatewayRestApiId:
+    apiGatewayRestApiId:
       Value:
         Ref: ApiGatewayRestApi
       Export:
-        Name: ${self:custom.stage}-ExtApiGatewayRestApiId
-    ApiGatewayRestApiRootResourceId:
+        Name: ${self:custom.stage}-ExtAPIGatewayRESTAPIId
+    apiGatewayRestApiRootResourceId:
       Value:
         Fn::GetAtt:
           - ApiGatewayRestApi
           - RootResourceId
       Export:
-        Name: ${self:custom.stage}-ExtApiGatewayRestApiRootResourceId
+        Name: ${self:custom.stage}-ExtAPIGatewayRESTAPIRootResourceId
 
 functions:
   graphql:
     role: GraphQLLambdaRole
     environment:
-      DOMAIN: ${self:custom.d}
       STAGE: ${self:custom.stage}
       ACCESS_TOKEN_SECRET:
         "Fn::ImportValue": ${self:custom.stage}-AccessTokenSecret
-      REFRESH_TOKEN_SECRET:
-        "Fn::ImportValue": ${self:custom.stage}-RefreshTokenSecret
       DATABASE_URL:
         "Fn::ImportValue": ${self:custom.stage}-DBUrl
-      DB_HOST:
-        "Fn::ImportValue": ${self:custom.stage}-DBHost
-      DB_PORT:
-        "Fn::ImportValue": ${self:custom.stage}-DBPort
-      DB_NAME:
-        "Fn::ImportValue": ${self:custom.stage}-DBName
-      DB_USERNAME:
-        "Fn::ImportValue": ${self:custom.stage}-DBUsername
-      DB_PASSWORD:
-        "Fn::ImportValue": ${self:custom.stage}-DBPassword
     vpc:
       securityGroupIds:
         - "Fn::ImportValue": ${self:custom.stage}-LambdaSecurityGroup
@@ -96,8 +82,10 @@ functions:
           path: /graphql
           method: post
           cors:
-            origin:
-              - "http://localhost:3000"
+            origins:
+              - ${file(./../../../../../saruni.json):serverless.${self:custom.stage}.frontendUrl}
+              - ${file(./../../../../../saruni.json):serverless.${self:custom.stage}.frontendCloudfrontUrl}
+              - http://localhost:${file(./../../../../../saruni.json):devServerPort.web}
             headers:
               - Content-Type
               - X-Amz-Date
@@ -110,6 +98,15 @@ functions:
           path: /graphql
           method: get
           cors:
-            origin:
-              - "http://localhost:3000"
+            origins:
+              - ${file(./../../../../../saruni.json):serverless.${self:custom.stage}.frontendUrl}
+              - ${file(./../../../../../saruni.json):serverless.${self:custom.stage}.frontendCloudfrontUrl}
+              - http://localhost:${file(./../../../../../saruni.json):devServerPort.web}
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
             allowCredentials: true

@@ -1,0 +1,67 @@
+Type: "AWS::CloudFront::Distribution"
+Properties:
+  DistributionConfig:
+    Aliases:
+      !If [
+        IsProd,
+        [
+          "${file(./../../../../saruni.json):serverless.${self:custom.stage}.frontendDomain}",
+        ],
+        !Ref "AWS::NoValue",
+      ]
+    CustomErrorResponses:
+      - ErrorCode: 404
+        ResponseCode: 200
+        ResponsePagePath: "/404/index.html"
+    DefaultCacheBehavior:
+      AllowedMethods:
+        - GET
+        - HEAD
+        - OPTIONS
+      CachedMethods:
+        - GET
+        - HEAD
+        - OPTIONS
+      Compress: true
+      DefaultTTL: 3600 # in seconds
+      ForwardedValues:
+        Cookies:
+          Forward: none
+        QueryString: false
+      MaxTTL: 86400 # in seconds
+      MinTTL: 60 # in seconds
+      TargetOriginId: S3root
+      ViewerProtocolPolicy: "redirect-to-https"
+    DefaultRootObject: "index.html"
+    Enabled: true
+    HttpVersion: http2
+    Origins:
+      - CustomOriginConfig:
+          HTTPPort: 80
+          HTTPSPort: 443
+          OriginKeepaliveTimeout: 5
+          OriginProtocolPolicy: "http-only"
+          OriginReadTimeout: 30
+          OriginSSLProtocols:
+            - TLSv1
+            - TLSv1.1
+            - TLSv1.2
+        DomainName:
+          Fn::Join:
+            - ""
+            - - !Ref FrontendBucket
+              - ".s3-website."
+              - ${self:provider.region}
+              - ".amazonaws.com"
+        Id: S3root
+    PriceClass: "PriceClass_All"
+    ViewerCertificate:
+      CloudFrontDefaultCertificate: !If [IsProd, !Ref "AWS::NoValue", true]
+      AcmCertificateArn:
+        !If [
+          IsProd,
+          "${file(./../../../../saruni.json):serverless.${self:custom.stage}.certificateArn}",
+          !Ref "AWS::NoValue",
+        ]
+      MinimumProtocolVersion: !If [IsProd, TLSv1.2_2019, !Ref "AWS::NoValue"]
+      SslSupportMethod: !If [IsProd, sni-only, !Ref "AWS::NoValue"]

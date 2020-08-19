@@ -14,7 +14,7 @@ module.exports = {
     new CopyWebpackPlugin({
       patterns: [
         path.resolve(__dirname, "./prisma/schema.prisma"),
-        path.resolve(__dirname, "./prisma/.env"),
+        path.resolve(__dirname, "./../../.env"),
       ],
     }),
   ],
@@ -22,7 +22,7 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.(mjs|js|ts)/,
+        test: /\.(mjs|js|ts)$/,
         exclude: /node_modules/,
         use: {
           loader: "babel-loader",

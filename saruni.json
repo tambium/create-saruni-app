@@ -1,1 +1,39 @@
-{}
+{
+  "projectName": "",
+  "serverless": {
+    "prod": {
+      "region": "eu-west-1",
+      "domainName": "",
+      "domainUrl": "",
+      "hostedZoneId": "",
+      "certificateArn": "",
+      "bastionKeyName": "bastion-key",
+      "dbInstance": "db.t2.micro",
+      "frontendDomain": "",
+      "frontendUrl": "",
+      "frontendCloudfrontUrl": "",
+      "awsProfile": "",
+      "frontendS3Bucket": "",
+      "distId": ""
+    },
+    "dev": {
+      "region": "eu-west-1",
+      "domainName": "",
+      "domainUrl": "",
+      "hostedZoneId": "",
+      "certificateArn": "",
+      "bastionKeyName": "bastion-key",
+      "dbInstance": "db.t2.micro",
+      "frontendDomain": "",
+      "frontendUrl": "",
+      "frontendCloudfrontUrl": "",
+      "awsProfile": "",
+      "frontendS3Bucket": "",
+      "distId": ""
+    }
+  },
+  "devServerPort": {
+    "web": "3000",
+    "api": "4000"
+  }
+}

@@ -1,7 +1,7 @@
 DependsOn: VPC
 Type: AWS::EC2::SecurityGroup
 Properties:
-  GroupDescription: Security group to allow SSH connections
+  GroupDescription: Security group to allow ssh connections
   VpcId:
     Ref: VPC
   SecurityGroupIngress:

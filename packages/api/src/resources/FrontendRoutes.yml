@@ -1,0 +1,17 @@
+Type: AWS::Route53::RecordSetGroup
+Condition: IsProd
+Properties:
+  HostedZoneId: ${file(./../../../../saruni.json):serverless.${self:custom.stage}.hostedZoneId}
+  RecordSets:
+    - Name: ${file(./../../../../saruni.json):serverless.${self:custom.stage}.frontendDomain}
+      Type: A
+      AliasTarget:
+        DNSName: !GetAtt FrontendCloudfront.DomainName
+        EvaluateTargetHealth: false
+        HostedZoneId: Z2FDTNDATAQYW2
+    - Name: ${file(./../../../../saruni.json):serverless.${self:custom.stage}.frontendDomain}
+      Type: AAAA
+      AliasTarget:
+        DNSName: !GetAtt FrontendCloudfront.DomainName
+        EvaluateTargetHealth: false
+        HostedZoneId: Z2FDTNDATAQYW2

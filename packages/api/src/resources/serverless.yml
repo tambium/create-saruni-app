@@ -2,22 +2,22 @@ service: resources
 
 provider:
   name: aws
-  region: eu-west-1
+  region: ${file(./../../../../saruni.json):serverless.${self:custom.stage}.region}
   stage: dev
   runtime: nodejs12.x
 
 custom:
-  # TODO: Provide defaults but allow modification through .env.
+  ProjectName: ${file(./../../../../saruni.json):projectName}
   DBInstanceSize:
     dev: db.t2.micro
-    prod: db.t2.micro
+    prod: ${file(./../../../../saruni.json):serverless.${self:custom.stage}.dbInstance}
   stage: ${opt:stage, self:provider.stage}
-  # TODO: Make key name customizable through CLI.
-  BastionKeyName: bastion-key
-  DBName: ${ssm:/DBName/${self:custom.stage}~true}
+  IsProd: !Equals ["${self:custom.stage}", prod]
+  BastionKeyName: ${self:custom.stage}-${file(./../../../../saruni.json):serverless.${self:custom.stage}.bastionKeyName}
+  DBName: ${ssm:/${self:custom.ProjectName}/DBName/${self:custom.stage}~true}
   DBInstance: ${self:custom.DBInstanceSize.${self:custom.stage}}
-  DBUsername: ${ssm:/DBUsername/${self:custom.stage}~true}
-  DBPassword: ${ssm:/DBPassword/${self:custom.stage}~true}
+  DBUsername: ${ssm:/${self:custom.ProjectName}/DBUsername/${self:custom.stage}~true}
+  DBPassword: ${ssm:/${self:custom.ProjectName}/DBPassword/${self:custom.stage}~true}
   DBHost:
     Fn::GetAtt: [PostgreSQLRDSInstance, Endpoint.Address]
   DBPort:
@@ -44,7 +44,13 @@ custom:
     }
 
 resources:
+  Conditions:
+    IsProd: !Equals ["${self:custom.stage}", prod]
   Resources:
+    FrontendCloudfront: ${file(./FrontendCloudfront.yml)}
+    FrontendRoutes: ${file(./FrontendRoutes.yml)}
+    FrontendBucket: ${file(./FrontendBucket.yml)}
+    FrontendBucketPolicy: ${file(./FrontendBucketPolicy.yml)}
     VPC: ${file(./vpc.yml)}
     VPCGatewayAttachment: ${file(./VPCGatewayAttachment.yml)}
     PrivateSubnetA: ${file(./PrivateSubnetA.yml)}
@@ -107,14 +113,18 @@ resources:
       Export:
         Name: ${self:custom.stage}-DBPort
     AccessTokenSecret:
-      Value: ${ssm:/AccessTokenSecret/${self:custom.stage}~true}
+      Value: ${ssm:/${self:custom.ProjectName}/AccessTokenSecret/${self:custom.stage}~true}
       Export:
         Name: ${self:custom.stage}-AccessTokenSecret
     RefreshTokenSecret:
-      Value: ${ssm:/RefreshTokenSecret/${self:custom.stage}~true}
+      Value: ${ssm:/${self:custom.ProjectName}/RefreshTokenSecret/${self:custom.stage}~true}
       Export:
         Name: ${self:custom.stage}-RefreshTokenSecret
     DBUrl:
       Value: ${self:custom.DBUrl}
       Export:
         Name: ${self:custom.stage}-DBUrl
+    WebDistributionUrl:
+      Value: !Join ["", ["http://", !GetAtt FrontendCloudfront.DomainName]]
+      Export:
+        Name: ${self:custom.stage}-WebDistributionUrl
