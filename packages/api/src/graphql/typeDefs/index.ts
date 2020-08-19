@@ -5,6 +5,10 @@ export const typeDefs = gql`
 
   scalar JSON
 
+  type Mutation {
+    createUser: Int!
+  }
+
   type Query {
     hello: String!
   }

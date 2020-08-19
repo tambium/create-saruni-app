@@ -1,9 +1,10 @@
 export * from "./typeDefs";
 
-import { Date, JSON, Query } from "./resolvers";
+import { Date, JSON, Mutation, Query } from "./resolvers";
 
 export const resolvers = {
   JSON,
   Date,
+  Mutation,
   Query,
 };
