@@ -1,12 +1,11 @@
 {
   "private": true,
   "workspaces": [
-    "packages/*"
+    "packages/**/*"
   ],
   "dependencies": {},
   "devDependencies": {
-    "@babel/preset-env": "^7.10.2",
-    "@babel/preset-typescript": "^7.10.1",
+    "@tambium/babel-preset": "latest",
     "@saruni/cli": "latest",
     "@saruni/dev-server": "latest",
     "@types/jest": "^26.0.5",
