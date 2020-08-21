@@ -47,6 +47,13 @@ resources:
   Conditions:
     IsProd: !Equals ["${self:custom.stage}", prod]
   Resources:
+    # For now let both environments use Nat instances
+    # NatEIP: ${file(./NatEIP.yml)}
+    # NatGateway: ${file(./NatGateway.yml)}
+    # NatGatewayRoute: ${file(./NatGatewayRoute.yml)}
+    NatRoute: ${file(./NatRoute.yml)}
+    NatInstance: ${file(./NatInstance.yml)}
+    NatInstanceSG: ${file(./NatInstanceSG.yml)}
     FrontendCloudfront: ${file(./FrontendCloudfront.yml)}
     FrontendRoutes: ${file(./FrontendRoutes.yml)}
     FrontendBucket: ${file(./FrontendBucket.yml)}
@@ -56,6 +63,10 @@ resources:
     PrivateSubnetA: ${file(./PrivateSubnetA.yml)}
     PrivateSubnetB: ${file(./PrivateSubnetB.yml)}
     PrivateSubnetC: ${file(./PrivateSubnetC.yml)}
+    PrivateRouteTable: ${file(./PrivateRouteTable.yml)}
+    PrivateSubnetRouteTableAssociationA: ${file(./PrivateSRTA.yml)}
+    PrivateSubnetRouteTableAssociationB: ${file(./PrivateSRTB.yml)}
+    PrivateSubnetRouteTableAssociationC: ${file(./PrivateSRTC.yml)}
     RDSSubnetGroup: ${file(./RDSSubnetGroup.yml)}
     InternetGateway: ${file(./InternetGateway.yml)}
     PostgreSQLRDSInstance: ${file(./PostgreSQLRDSInstance.yml)}

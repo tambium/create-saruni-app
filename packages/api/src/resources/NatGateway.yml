@@ -1,0 +1,10 @@
+Type: AWS::EC2::NatGateway
+Condition: IsProd
+DependsOn: NatEIP
+Properties:
+  AllocationId:
+    Fn::GetAtt:
+      - NatEIP
+      - AllocationId
+  SubnetId:
+    Ref: PublicSubnet

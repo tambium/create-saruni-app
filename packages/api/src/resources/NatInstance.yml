@@ -1,0 +1,10 @@
+Type: AWS::EC2::Instance
+# Condition: !Not [IsProd]
+Properties:
+  ImageId: ami-06ce3edf0cff21f07
+  InstanceType: t2.micro
+  KeyName: ${self:custom.BastionKeyName}
+  SecurityGroupIds:
+    - !GetAtt NatInstanceSG.GroupId
+  SubnetId: !Ref PublicSubnet
+  SourceDestCheck: false
